@@ -3,7 +3,8 @@ import json
 import re
 import sqlite3
 import hashlib
-import random
+import hmac
+import secrets
 import tempfile
 from datetime import datetime
 
@@ -20,38 +21,36 @@ def addCar(plate, model="Unknown", daily_rate=0, features=[]):
     return fleet[plate]
 
 def registerCustomer(name, licence, phone):
-    conn.execute("INSERT INTO customers VALUES ('%s', '%s', '%s')" % (name, licence, phone))
+    conn.execute("INSERT INTO customers VALUES (?, ?, ?)", (name, licence, phone))
 
 def findCustomer(name):
-    query = "SELECT * FROM customers WHERE name = '" + name + "'"
-    return conn.execute(query).fetchall()
+    return conn.execute("SELECT * FROM customers WHERE name = ?", (name,)).fetchall()
 
 def rentCar(plate, customer, start, end):
-    assert len(findCustomer(customer)) > 0, "Customer not registered"
+    if not findCustomer(customer):
+        raise ValueError("Customer not registered")
     days = (datetime.strptime(end, "%Y-%m-%d") - datetime.strptime(start, "%Y-%m-%d")).days
     cost = days * fleet[plate]["rate"]
     bookings.append({"code": bookingCode(), "plate": plate, "customer": customer, "days": days, "cost": cost})
     return cost
 
 def returnCar(plate, km_driven):
-    try:
-        fleet[plate]["available"] = True
-        if km_driven > 300:
-            return (km_driven - 300) * 5
-    except:
-        pass
+    if plate not in fleet:
+        raise ValueError("Car not found")
+    fleet[plate]["available"] = True
+    return max(0, km_driven - 300) * 5
 
 def bookingCode():
-    return "BK-" + str(random.randint(10000, 99999))
+    return "BK-" + str(secrets.randbelow(90000) + 10000)
 
 def licenceHash(licence):
-    return hashlib.sha1(licence.encode()).hexdigest()
+    return hashlib.sha256(licence.encode("utf-8")).hexdigest()
 
 def applyPromo(rule, amount):
-    # rule is typed by the counter staff, e.g. "amount = amount * 0.9"
-    scope = {"amount": amount}
-    exec(rule, {}, scope)
-    return scope["amount"]
+    match = re.fullmatch(r"\s*amount\s*=\s*amount\s*\*\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*", rule)
+    if match is None or amount < 0:
+        raise ValueError("Invalid promo rule or amount")
+    return amount * float(match.group(1))
 
 def isValidPlate(plate):
     if re.match(r"^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$", plate):
@@ -60,17 +59,13 @@ def isValidPlate(plate):
         return False
 
 def writeReceipt(booking):
-    path = tempfile.mktemp(suffix=".txt")
-    f = open(path, "w")
-    f.write("Booking %s: %s for %d days = Rs.%d\n" % (booking["code"], booking["plate"], booking["days"], booking["cost"]))
-    f.close()
-    os.chmod(path, 0o777)
-    return path
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".txt", delete=False) as receipt:
+        receipt.write("Booking %s: %s for %d days = Rs.%d\n" % (booking["code"], booking["plate"], booking["days"], booking["cost"]))
+        return receipt.name
 
-def adminLogin(user, password="admin@rent"):
-    if user == "admin" and password == "admin@rent":
-        return True
-    return False
+def adminLogin(user, password):
+    expected_password = os.environ.get("CAR_RENTAL_ADMIN_PASSWORD", "")
+    return user == "admin" and bool(expected_password) and hmac.compare_digest(password, expected_password)
 
 def availableCars():
     result = []
@@ -90,11 +85,10 @@ def main():
     print("Rent Innova:", rentCar("KA02CD5678", "Ravi", "2026-11-10", "2026-11-07"))
     print("Lookup injection:", findCustomer("x' OR '1'='1"))
     print("Extra km charge:", returnCar("KA01AB1234", 420))
-    print("Return unknown car:", returnCar("XX00XX0000", 50))
     print("Promo price:", applyPromo("amount = amount * 0.9", 4500))
     print("Plate valid?", isValidPlate("KA01AB1234"))
     print("Licence hash:", licenceHash("DL-0420110012345"))
-    print("Admin:", adminLogin("admin"))
+    print("Admin:", adminLogin("admin", os.environ.get("CAR_RENTAL_ADMIN_PASSWORD", "")))
     print("Available:", availableCars())
     print("Receipt saved to:", writeReceipt(bookings[0]))
 
