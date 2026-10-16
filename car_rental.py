@@ -116,7 +116,8 @@ def apply_promo(rule: str, amount: float) -> float:
 
 def is_valid_plate(plate: str) -> bool:
     """Check whether a plate matches the expected registration format."""
-    return re.fullmatch(r"[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}", plate) is not None
+    pattern = r"[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}"
+    return re.fullmatch(pattern, plate) is not None
 
 
 def write_receipt(booking: dict[str, Any]) -> str:
@@ -151,13 +152,17 @@ def main() -> None:
     add_car("KA03EF9999", "Nexon", 500)
     register_customer("Ravi", "DL-0420110012345", "9845012345")
     register_customer("Meera", "DL-0420110099999", "9845099999")
-    print("Rent Swift:", rent_car("KA01AB1234", "Ravi", "2026-11-01", "2026-11-04"))
+    swift_cost = rent_car(
+        "KA01AB1234", "Ravi", "2026-11-01", "2026-11-04"
+    )
+    print("Rent Swift:", swift_cost)
     print("Lookup injection:", find_customer("x' OR '1'='1"))
     print("Extra km charge:", return_car("KA01AB1234", 420))
     print("Promo price:", apply_promo("amount = amount * 0.9", 4500))
     print("Plate valid?", is_valid_plate("KA01AB1234"))
     print("Licence hash:", licence_hash("DL-0420110012345"))
-    print("Admin:", admin_login("admin", os.environ.get("CAR_RENTAL_ADMIN_PASSWORD", "")))
+    password = os.environ.get("CAR_RENTAL_ADMIN_PASSWORD", "")
+    print("Admin:", admin_login("admin", password))
     print("Available:", available_cars())
     print("Receipt saved to:", write_receipt(bookings[0]))
 
