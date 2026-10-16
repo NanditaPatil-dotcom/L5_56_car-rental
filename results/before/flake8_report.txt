@@ -1,0 +1,37 @@
+/tmp/car-rental-before/car_rental.py:2:1: F401 'json' imported but unused
+/tmp/car-rental-before/car_rental.py:16:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:16:6: N802 function name 'addCar' should be lowercase
+/tmp/car-rental-before/car_rental.py:19:80: E501 line too long (96 > 79 characters)
+/tmp/car-rental-before/car_rental.py:22:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:22:6: N802 function name 'registerCustomer' should be lowercase
+/tmp/car-rental-before/car_rental.py:23:80: E501 line too long (92 > 79 characters)
+/tmp/car-rental-before/car_rental.py:25:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:25:6: N802 function name 'findCustomer' should be lowercase
+/tmp/car-rental-before/car_rental.py:29:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:29:6: N802 function name 'rentCar' should be lowercase
+/tmp/car-rental-before/car_rental.py:31:80: E501 line too long (91 > 79 characters)
+/tmp/car-rental-before/car_rental.py:33:80: E501 line too long (110 > 79 characters)
+/tmp/car-rental-before/car_rental.py:36:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:36:6: N802 function name 'returnCar' should be lowercase
+/tmp/car-rental-before/car_rental.py:41:5: E722 do not use bare 'except'
+/tmp/car-rental-before/car_rental.py:44:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:44:6: N802 function name 'bookingCode' should be lowercase
+/tmp/car-rental-before/car_rental.py:47:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:47:6: N802 function name 'licenceHash' should be lowercase
+/tmp/car-rental-before/car_rental.py:50:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:50:6: N802 function name 'applyPromo' should be lowercase
+/tmp/car-rental-before/car_rental.py:56:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:56:6: N802 function name 'isValidPlate' should be lowercase
+/tmp/car-rental-before/car_rental.py:62:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:62:6: N802 function name 'writeReceipt' should be lowercase
+/tmp/car-rental-before/car_rental.py:65:80: E501 line too long (123 > 79 characters)
+/tmp/car-rental-before/car_rental.py:70:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:70:6: N802 function name 'adminLogin' should be lowercase
+/tmp/car-rental-before/car_rental.py:75:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:75:6: N802 function name 'availableCars' should be lowercase
+/tmp/car-rental-before/car_rental.py:78:34: E712 comparison to True should be 'if cond is True:' or 'if cond:'
+/tmp/car-rental-before/car_rental.py:82:1: E302 expected 2 blank lines, found 1
+/tmp/car-rental-before/car_rental.py:88:80: E501 line too long (83 > 79 characters)
+/tmp/car-rental-before/car_rental.py:89:80: E501 line too long (89 > 79 characters)
+/tmp/car-rental-before/car_rental.py:90:80: E501 line too long (84 > 79 characters)
+/tmp/car-rental-before/car_rental.py:101:1: E305 expected 2 blank lines after class or function definition, found 1

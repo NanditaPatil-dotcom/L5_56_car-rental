@@ -1,0 +1,11 @@
+| Issue | Type | Line(s) | Description | Fix Approach |
+|-------|------|---------|-------------|--------------|
+| Arbitrary code execution in promo rules | Security (High) | 50–54 | `applyPromo` passes staff-entered text to `exec`, allowing arbitrary Python execution. | Replace `exec` with a narrowly defined percent-discount rule parser and validate the amount. |
+| Weak licence hashing | Security (High) | 47–48 | SHA-1 is unsuitable for protecting licence numbers. | Use SHA-256 for the demonstration hash. |
+| SQL injection in customer queries | Security (High) | 22–27 | Customer fields are interpolated into SQL, allowing input to alter queries. | Use SQLite parameter placeholders for inserts and lookups. |
+| Unsafe receipt file creation and permissions | Security (High) | 62–68 | `mktemp` can race with other processes and `chmod(0o777)` makes receipts readable and writable by everyone. | Use `NamedTemporaryFile` with a restrictive default mode and a context manager. |
+| Invalid rental dates and negative rates accepted | Correctness (High) | 29–34, 85–90 | The demo rents the Innova over a reversed date range at a negative rate and reports a negative price. | Validate date order, car existence, availability, and non-negative rates before creating a booking. |
+| Rental availability is not updated | Correctness (High) | 29–34 | Renting a car never marks it unavailable, so it can be booked repeatedly. | Mark the car unavailable when booking succeeds; restore it on return. |
+| Return of an unknown car is silently ignored | Correctness (Medium) | 36–42 | A bare `except` hides errors and returns `None` for unknown plates. | Validate the plate explicitly and raise a clear `ValueError`; always return a numeric fee for valid cars. |
+| Booking codes use a predictable random generator | Security (Medium) | 44–45 | `random.randint` produces predictable identifiers. | Use `secrets` for booking code generation. |
+| Mutable default value and inconsistent returns | Code quality (Medium) | 16–20 | `features=[]` is shared across calls, and invalid plates return `None` while valid plates return a car record. | Use `None` as the default and consistently return a result or raise a clear error. |
